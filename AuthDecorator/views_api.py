@@ -1,11 +1,18 @@
 from django.contrib.auth import authenticate
+from django.contrib.auth.decorators import user_passes_test, login_required
+from django.http import JsonResponse
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
+from rest_framework.decorators import permission_classes
+from rest_framework.permissions import IsAuthenticated
+
+from .decorators import is_driver
 from .models import *
 from .serializer import *
 from auth_decorators.utils import *
 from .utils import *
+from .AuthClasses import IsDriver
 
 
 @api_view(['POST'])
@@ -29,3 +36,11 @@ def user_login(request):
                             status=status.HTTP_400_BAD_REQUEST)
     else:
         return Response(failure_response(user_login_serializer.errors, 'Something went wrong'))
+
+
+@api_view(["GET"])
+@permission_classes([IsDriver])
+def get_driver_view(request):
+    return Response(success_response())
+
+
